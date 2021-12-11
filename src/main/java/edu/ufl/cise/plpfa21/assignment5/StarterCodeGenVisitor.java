@@ -280,6 +280,8 @@ public class StarterCodeGenVisitor implements ASTVisitor, Opcodes {
 
 	@Override
 	public Object visitIProgram(IProgram n, Object arg) throws Exception {
+		System.out.println("Yolo this is to test github desktop");
+		
 		cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 		/*
 		 * If the call to mv.visitMaxs(1, 1) crashes, it is sometime helpful to temporarily try it without COMPUTE_FRAMES. You won't get a runnable class file
