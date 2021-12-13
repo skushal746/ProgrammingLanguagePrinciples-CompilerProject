@@ -12,6 +12,7 @@ import org.objectweb.asm.Opcodes;
 
 import edu.ufl.cise.plpfa21.assignment1.PLPTokenKinds.Kind;
 import edu.ufl.cise.plpfa21.assignment3.ast.ASTVisitor;
+import edu.ufl.cise.plpfa21.assignment3.ast.Expression;
 import edu.ufl.cise.plpfa21.assignment3.ast.IAssignmentStatement;
 import edu.ufl.cise.plpfa21.assignment3.ast.IBinaryExpression;
 import edu.ufl.cise.plpfa21.assignment3.ast.IBlock;
@@ -96,6 +97,91 @@ public class StarterCodeGenVisitor implements ASTVisitor, Opcodes {
 
 	@Override
 	public Object visitIBinaryExpression(IBinaryExpression n, Object arg) throws Exception {
+		MethodVisitor mv = ((MethodVisitorLocalVarTable) arg).mv();
+		n.getLeft().visit(this, arg);
+		n.getRight().visit(this, arg);
+		
+		/*
+		 * For Type Integer
+		 */
+		if( n.getLeft().getType().isInt() && n.getRight().getType().isInt() )
+		{
+			if(n.getOp().equals(Kind.PLUS))
+			{
+				mv.visitFieldInsn(INVOKESTATIC, runtimeClass, "add", "(II)I");
+			}
+			else if(n.getOp().equals(Kind.MINUS))
+			{
+				mv.visitFieldInsn(INVOKESTATIC, runtimeClass, "minus", "(II)I");
+			}
+			else if(n.getOp().equals(Kind.EQUALS))
+			{
+				mv.visitFieldInsn(INVOKESTATIC, runtimeClass, "equals", "(II)Z");
+			}
+			else if(n.getOp().equals(Kind.NOT_EQUALS))
+			{
+				mv.visitFieldInsn(INVOKESTATIC, runtimeClass, "notEquals", "(II)Z");
+			}
+			else if(n.getOp().equals(Kind.TIMES))
+			{
+				mv.visitFieldInsn(INVOKESTATIC, runtimeClass, "times", "(II)I");
+			}
+			else if(n.getOp().equals(Kind.DIV))
+			{
+				mv.visitFieldInsn(GETSTATIC, runtimeClass, "divide", "(II)I");
+			}
+			else if(n.getOp().equals(Kind.LT))
+			{
+				mv.visitFieldInsn(GETSTATIC, runtimeClass, "lessThan", "(II)Z");
+			}
+			else if(n.getOp().equals(Kind.GT))
+			{
+				mv.visitFieldInsn(GETSTATIC, runtimeClass, "greaterThan", "(II)Z");
+			}
+		}
+		else if( n.getLeft().getType().isBoolean() && n.getRight().getType().isBoolean() )
+		{
+			if(n.getOp().equals(Kind.AND))
+			{
+				mv.visitFieldInsn(GETSTATIC, runtimeClass, "and", "(ZZ)Z");
+			}
+			else if(n.getOp().equals(Kind.OR))
+			{
+				mv.visitFieldInsn(GETSTATIC, runtimeClass, "or", "(ZZ)Z");
+			}
+			else if(n.getOp().equals(Kind.EQUALS))
+			{
+				mv.visitFieldInsn(GETSTATIC, runtimeClass, "equals", "(ZZ)Z");
+			}
+			else if(n.getOp().equals(Kind.NOT_EQUALS))
+			{
+				mv.visitFieldInsn(GETSTATIC, runtimeClass, "notEquals", "(ZZ)Z");
+			}
+		}
+		else if(n.getLeft().getType().isString() && n.getRight().getType().isString() )
+		{
+			if(n.getOp().equals(Kind.PLUS))
+			{
+				mv.visitFieldInsn(GETSTATIC, runtimeClass, "plus", "(" + stringDesc + stringDesc + ")" + stringDesc);
+			}
+			else if(n.getOp().equals(Kind.EQUALS))
+			{
+				mv.visitFieldInsn(GETSTATIC, runtimeClass, "equals", "(" + stringDesc + stringDesc + ")Z" );
+			}
+			else if(n.getOp().equals(Kind.NOT_EQUALS))
+			{
+				mv.visitFieldInsn(GETSTATIC, runtimeClass, "notEquals", "(" + stringDesc + stringDesc + ")Z" );
+			}
+			else if(n.getOp().equals(Kind.LT))
+			{
+				mv.visitFieldInsn(GETSTATIC, runtimeClass, "lessThan", "(" + stringDesc + stringDesc + ")Z" );
+			}
+			else if(n.getOp().equals(Kind.GT))
+			{
+				mv.visitFieldInsn(GETSTATIC, runtimeClass, "greaterThan", "(" + stringDesc + stringDesc + ")Z" );
+			}
+		}
+		
 		
 		throw new UnsupportedOperationException("TO IMPLEMENT");
 	}
@@ -177,7 +263,21 @@ public class StarterCodeGenVisitor implements ASTVisitor, Opcodes {
 
 	@Override
 	public Object visitIFunctionCallExpression(IFunctionCallExpression n, Object arg) throws Exception {
-		throw new UnsupportedOperationException("TO IMPLEMENT");
+		
+		/*
+		 * Getting description.
+		 */
+		StringBuffer stringBuffer = new StringBuffer();
+		List<IExpression> listOfExpressions = n.getArgs();
+		
+		stringBuffer.append("(");
+		for(IExpression singleExpression : listOfExpressions)
+		{
+			stringBuffer.append(singleExpression.getType().getDesc());
+		}
+		
+		return null;
+		//throw new UnsupportedOperationException("TO IMPLEMENT");
 	}
 
 	@Override
@@ -185,14 +285,36 @@ public class StarterCodeGenVisitor implements ASTVisitor, Opcodes {
 		
 		MethodVisitor mv = ((MethodVisitorLocalVarTable)arg).mv;
 		String desc;
-		if(n.getType().isKind(TypeKind.BOOLEAN)) {
-			desc = "Z";
-            mv.visitFieldInsn(GETSTATIC, className, n.getText(), desc);
+		if(n.getName().getDec() instanceof IImmutableGlobal || n.getName().getDec() instanceof IMutableGlobal)
+		{
+			if(n.getType().isKind(TypeKind.BOOLEAN)) {
+				desc = "Z";
+	            mv.visitFieldInsn(GETSTATIC, className, n.getText(), desc);
+			}
+			else if(n.getType().isKind(TypeKind.INT)) {
+				desc = "I";
+	            mv.visitFieldInsn(GETSTATIC, className, n.getText(), desc);
+			}
+			else if(n.getType().isKind(TypeKind.STRING))
+			{
+				desc = stringDesc;
+				mv.visitFieldInsn(GETSTATIC, className, n.getText(), desc);
+			}
 		}
-		else if(n.getType().isKind(TypeKind.INT)) {
-			desc = "I";
-            mv.visitFieldInsn(GETSTATIC, className, n.getText(), desc);
+		else
+		{
+			if(n.getType().isKind(TypeKind.BOOLEAN)) {
+	            mv.visitVarInsn(ISTORE, n.getName().getSlot());
+			}
+			else if(n.getType().isKind(TypeKind.INT)) {
+				mv.visitVarInsn(ISTORE, n.getName().getSlot());
+			}
+			else if(n.getType().isKind(TypeKind.STRING))
+			{
+				mv.visitVarInsn(ASTORE, n.getName().getSlot());
+			}
 		}
+		
 		
 		/*
 		MethodVisitor mv = ((MethodVisitorLocalVarTable)arg).mv;
@@ -211,9 +333,9 @@ public class StarterCodeGenVisitor implements ASTVisitor, Opcodes {
 	@Override
 	public Object visitIIdentifier(IIdentifier n, Object arg) throws Exception {
 		
+		return null;
 		
-		
-		throw new UnsupportedOperationException("TO IMPLEMENT");
+		//throw new UnsupportedOperationException("TO IMPLEMENT");
 	}
 
 	@Override
@@ -270,7 +392,34 @@ public class StarterCodeGenVisitor implements ASTVisitor, Opcodes {
 
 	@Override
 	public Object visitINameDef(INameDef n, Object arg) throws Exception {
-		throw new UnsupportedOperationException();
+		//throw new UnsupportedOperationException();
+		MethodVisitor mv = ((MethodVisitorLocalVarTable)arg).mv;
+		List<LocalVarInfo> localVarArray = ((MethodVisitorLocalVarTable)arg).localVars;
+		
+		if(!(n.getIdent().getDec() instanceof IMutableGlobal || n.getIdent().getDec() instanceof IImmutableGlobal))
+		{
+			n.getIdent().setSlot(localVarArray.size());
+			
+			if(n.getType().isInt() || n.getType().isBoolean())
+				localVarArray.add(new LocalVarInfo(n.getIdent().getName(), "I", null, null));
+			else if(n.getType().isString())
+				localVarArray.add(new LocalVarInfo(n.getIdent().getName(), stringDesc, null, null));
+		}
+		
+		
+		Label funcStart = new Label();
+		mv.visitLabel(funcStart);
+		MethodVisitorLocalVarTable context = new MethodVisitorLocalVarTable(mv, localVarArray);
+		Label funcEnd = new Label();
+		mv.visitLabel(funcEnd);
+		
+		addLocals(context, funcStart, funcEnd);
+
+		mv.visitMaxs(0, 0);
+		
+		//terminate construction of method
+		mv.visitEnd();
+		return null;
 	}
 
 	@Override
@@ -280,7 +429,6 @@ public class StarterCodeGenVisitor implements ASTVisitor, Opcodes {
 
 	@Override
 	public Object visitIProgram(IProgram n, Object arg) throws Exception {
-		System.out.println("Yolo this is to test github desktop");
 		
 		cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 		/*
@@ -372,7 +520,7 @@ public class StarterCodeGenVisitor implements ASTVisitor, Opcodes {
 		IType operandType = n.getExpression().getType();
 		switch(op) {
 		case MINUS -> {
-			mv.visitInsn(INEG);
+			mv.visitMethodInsn(INVOKESTATIC, runtimeClass, "minus", "(I)I",false);
 			break;
 			//throw new UnsupportedOperationException("IMPLEMENT unary minus");
 		}
@@ -410,7 +558,6 @@ public class StarterCodeGenVisitor implements ASTVisitor, Opcodes {
 		n.getGuardExpression().visit(this, arg);
 		mv.visitJumpInsn(IFNE, l2);
 		return null;
-		
 		//throw new UnsupportedOperationException("TO IMPLEMENT");
 	}
 
@@ -448,24 +595,34 @@ public class StarterCodeGenVisitor implements ASTVisitor, Opcodes {
 
 	@Override
 	public Object visitIAssignmentStatement(IAssignmentStatement n, Object arg) throws Exception {
-		
 		MethodVisitor mv = ((MethodVisitorLocalVarTable)arg).mv;
 		
-		IExpression leftExpression = n.getLeft();
-		IExpression rightExpression = n.getRight();
-		if(rightExpression!=null)
-		{
-			if((leftExpression.getType().isKind(TypeKind.BOOLEAN) && rightExpression.getType().isKind(TypeKind.BOOLEAN)) || 
-					(leftExpression.getType().isKind(TypeKind.INT) && rightExpression.getType().isKind(TypeKind.INT)))
-			{
-				rightExpression.visit(this, arg);
-				mv.visitInsn(DUP);
-				leftExpression.visit(this, arg);
-			}
+		if(n.getLeft() instanceof IFunctionCallExpression) {
+			n.getLeft().visit(this, arg);
 		}
-		else
-		{
-			leftExpression.visit(this, arg);
+		else {
+			n.getRight().visit(this, arg);
+			IIdentifier i = ((IIdentExpression)n.getLeft()).getName();
+			if( i.getDec() instanceof IMutableGlobal )
+			{
+				mv.visitFieldInsn(PUTSTATIC, className, i.getName(), ((IMutableGlobal)i.getDec()).getVarDef().getType().getDesc());
+			}
+			else if( i.getDec() instanceof IImmutableGlobal )
+			{
+				mv.visitFieldInsn(PUTSTATIC, className, i.getName(), ((IImmutableGlobal)i.getDec()).getVarDef().getType().getDesc());
+			}
+			else if( i.getDec() instanceof INameDef )
+			{
+				INameDef nameDef = (INameDef)i.getDec();
+				if(nameDef.getType().isInt() || nameDef.getType().isBoolean())
+				{
+					mv.visitVarInsn(ISTORE, nameDef.getIdent().getSlot());	
+				}
+				else
+				{
+					mv.visitVarInsn(ASTORE, nameDef.getIdent().getSlot());
+				}
+			}
 		}
 		
 		return null;

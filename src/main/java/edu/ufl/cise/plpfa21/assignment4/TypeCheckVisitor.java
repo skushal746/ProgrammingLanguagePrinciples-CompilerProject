@@ -49,6 +49,7 @@ public class TypeCheckVisitor implements ASTVisitor {
 		}
 	}
 
+	int slotNumber = 0;
 	SymbolTable symtab = new SymbolTable();
 
 	private void check(boolean b, IASTNode n, String message) throws TypeCheckException {
@@ -254,6 +255,10 @@ public class TypeCheckVisitor implements ASTVisitor {
 		IType varType = type != null ? (IType) type.visit(this, null) : Type__.undefinedType;
 		if (arg instanceof IMutableGlobal || arg instanceof IImmutableGlobal) {
 			check(symtab.insert(name, (IDeclaration) arg), n, "Variable " + name + "already declared in this scope");
+			/*
+			 * Addding declaration for assignment 6
+			 */
+			//n.getIdent().setDec((IDeclaration)arg);
 		} else {
 			check(symtab.insert(name, n), n, "Variable " + name + "already declared in this scope");
 		}
@@ -495,6 +500,12 @@ public class TypeCheckVisitor implements ASTVisitor {
 		String name = n.getName();
 		IDeclaration dec = symtab.lookupDec(name);
 		check(dec != null, n, "identifier not declared");
+		/*
+		 * Setting Declaration and slot number, which is going to be used in the Assignment 6
+		 */
+		n.setDec(dec);
+		//n.setSlot(slotNumber);
+		//slotNumber++;
 		return dec;
 	}
 
