@@ -6,7 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 
-public class CodeGenTestsHW6ForGrading extends CodeGenTestsBaseHW6ForGrading{
+public class CodeGenTestsHW6ForGradingGivenByProf extends CodeGenTestsBaseHW6ForGradingGivenByProf{
 
 	@DisplayName("testLiteral_boolean_true")
 	@Test

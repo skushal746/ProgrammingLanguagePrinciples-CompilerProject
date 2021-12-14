@@ -10,7 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 
-public class ContributedCodeGenTestsHW6ForGrading extends CodeGenTestsBaseHW6ForGrading{
+public class ContributedCodeGenTestsHW6ForGradingGivenByProf extends CodeGenTestsBaseHW6ForGradingGivenByProf{
 
 		
 	@DisplayName("John_Bright_test0")

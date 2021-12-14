@@ -18,7 +18,7 @@ import edu.ufl.cise.plpfa21.assignment2.IPLPParser;
 import edu.ufl.cise.plpfa21.assignment3.ast.IASTNode;
 import edu.ufl.cise.plpfa21.assignment5.CodeGenUtils.DynamicClassLoader;
 
-public class CodeGenTestsBaseHW6ForGrading {
+public class CodeGenTestsBaseHW6ForGradingGivenByProf {
 
 	/** Retrieves value of global int variable from loaded classfile.
 	 * 

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 
-public class ComprehensiveTestsHW6ForGrading extends CodeGenTestsBaseHW6ForGrading {
+public class ComprehensiveTestsHW6ForGradingGivenByProf extends CodeGenTestsBaseHW6ForGradingGivenByProf {
 
 
 	@DisplayName("Int lit out of bounds")
