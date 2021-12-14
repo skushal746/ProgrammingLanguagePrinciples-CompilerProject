@@ -193,8 +193,9 @@ public class TypeCheckVisitor implements ASTVisitor {
 		INameDef localDef = n.getLocalDef();
 		check(symtab.insert(localDef.getIdent().getName(), localDef), n, localDef.getIdent().getName() + " already declared in scope");
 		symtab.enterScope();
-		IType inferredType = unifyAndCheck(localDef.getType(), expressionType, n);
-		localDef.setType(inferredType);
+		//IType inferredType = unifyAndCheck(localDef.getType(), expressionType, n);
+		//localDef.setType(inferredType);
+		localDef.setType(expressionType);
 		IBlock block = n.getBlock();
 		block.visit(this, arg);
 		symtab.leaveScope();

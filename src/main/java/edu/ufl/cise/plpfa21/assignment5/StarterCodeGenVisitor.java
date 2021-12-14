@@ -53,7 +53,7 @@ public class StarterCodeGenVisitor implements ASTVisitor, Opcodes {
 	
 	public StarterCodeGenVisitor(String className, String packageName, String sourceFileName){
 		this.className = className;
-		this.packageName = packageName;	
+		this.packageName = packageName;
 		this.sourceFileName = sourceFileName;
 	}
 	
@@ -428,8 +428,8 @@ public class StarterCodeGenVisitor implements ASTVisitor, Opcodes {
 		{
 			n.getExpression().visit(this, arg);
 			if(n.getExpression().getType().isInt() || n.getExpression().getType().isBoolean())
-				mv.visitVarInsn(ILOAD,n.getLocalDef().getIdent().getSlot());
-			else mv.visitVarInsn(ALOAD, n.getLocalDef().getIdent().getSlot());
+				mv.visitVarInsn(ISTORE,n.getLocalDef().getIdent().getSlot());
+			else mv.visitVarInsn(ASTORE, n.getLocalDef().getIdent().getSlot());
 		}
 		n.getBlock().visit(this, arg);
 		return null;
