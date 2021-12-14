@@ -276,6 +276,7 @@ public class StarterCodeGenVisitor implements ASTVisitor, Opcodes {
 		stringBuffer.append("(");
 		for(IExpression singleExpression : listOfExpressions)
 		{
+			singleExpression.visit(this, arg);
 			stringBuffer.append(singleExpression.getType().getDesc());
 		}
 		stringBuffer.append(")");
@@ -343,6 +344,7 @@ public class StarterCodeGenVisitor implements ASTVisitor, Opcodes {
 	@Override
 	public Object visitIIdentifier(IIdentifier n, Object arg) throws Exception {
 		
+		/*
 		MethodVisitor mv = ((MethodVisitorLocalVarTable)arg).mv;
 		String desc;
 		
@@ -377,6 +379,7 @@ public class StarterCodeGenVisitor implements ASTVisitor, Opcodes {
 				mv.visitVarInsn(ALOAD, ((IFunctionDeclaration)n.getDec()).getName().getSlot());
 			}
 		}
+		*/
 		return null;
 		
 		//throw new UnsupportedOperationException("TO IMPLEMENT");
@@ -456,24 +459,11 @@ public class StarterCodeGenVisitor implements ASTVisitor, Opcodes {
 			n.getIdent().setSlot(localVarArray.size());
 			
 			if(n.getType().isInt() || n.getType().isBoolean())
-				localVarArray.add(new LocalVarInfo(n.getIdent().getName(), "I", null, null));
+				localVarArray.add(new LocalVarInfo(n.getIdent().getName(), n.getType().getDesc(), null, null));
 			else if(n.getType().isString())
-				localVarArray.add(new LocalVarInfo(n.getIdent().getName(), stringDesc, null, null));
+				localVarArray.add(new LocalVarInfo(n.getIdent().getName(), n.getType().getDesc(), null, null));
 		}
 		
-		
-		Label funcStart = new Label();
-		mv.visitLabel(funcStart);
-		MethodVisitorLocalVarTable context = new MethodVisitorLocalVarTable(mv, localVarArray);
-		Label funcEnd = new Label();
-		mv.visitLabel(funcEnd);
-		
-		addLocals(context, funcStart, funcEnd);
-
-		mv.visitMaxs(0, 0);
-		
-		//terminate construction of method
-		mv.visitEnd();
 		return null;
 	}
 
