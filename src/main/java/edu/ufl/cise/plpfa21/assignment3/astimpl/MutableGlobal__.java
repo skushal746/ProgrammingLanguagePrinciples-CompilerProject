@@ -43,5 +43,10 @@ public class MutableGlobal__ extends Declaration__ implements IMutableGlobal {
 	public void setType(IType type) {
 		varDef.setType(type);		
 	}
+
+	@Override
+	public IType getType() {
+		return varDef.getType();
+	}
 	
 }

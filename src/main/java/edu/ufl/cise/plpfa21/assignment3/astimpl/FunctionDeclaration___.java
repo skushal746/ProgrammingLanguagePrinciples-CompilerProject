@@ -48,7 +48,10 @@ public class FunctionDeclaration___ extends Declaration__ implements IFunctionDe
 	@Override
 	public void setType(IType type) {
 		resultType = type;
-		
+	}
+	@Override
+	public IType getType() {
+		return resultType;
 	}
 	
 	

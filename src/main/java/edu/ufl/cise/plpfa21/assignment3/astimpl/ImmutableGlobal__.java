@@ -41,6 +41,11 @@ public class ImmutableGlobal__ extends Declaration__ implements IImmutableGlobal
 	public void setType(IType type) {
 		nameDef.setType(type);
 	}
+
+	@Override
+	public IType getType() {
+		return nameDef.getType();
+	}
 	
 	
 	

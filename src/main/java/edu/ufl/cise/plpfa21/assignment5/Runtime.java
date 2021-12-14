@@ -66,16 +66,12 @@ public class Runtime {
 	
 	public static boolean lessThan(String a, String b)
 	{
-		if( a.compareTo(b) < 0)
-			return true;
-		else return false;
+		return b.startsWith(a);
 	}
 	
 	public static boolean greaterThan(String a, String b)
 	{
-		if( a.compareTo(b) > 0)
-			return true;
-		else return false;
+		return a.startsWith(b);
 	}
 	
 	/*

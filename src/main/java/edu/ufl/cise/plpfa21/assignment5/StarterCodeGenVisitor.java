@@ -108,82 +108,81 @@ public class StarterCodeGenVisitor implements ASTVisitor, Opcodes {
 		{
 			if(n.getOp().equals(Kind.PLUS))
 			{
-				mv.visitFieldInsn(INVOKESTATIC, runtimeClass, "add", "(II)I");
+				mv.visitMethodInsn(INVOKESTATIC, runtimeClass, "add", "(II)I", false);
 			}
 			else if(n.getOp().equals(Kind.MINUS))
 			{
-				mv.visitFieldInsn(INVOKESTATIC, runtimeClass, "minus", "(II)I");
+				mv.visitMethodInsn(INVOKESTATIC, runtimeClass, "minus", "(II)I", false);
 			}
 			else if(n.getOp().equals(Kind.EQUALS))
 			{
-				mv.visitFieldInsn(INVOKESTATIC, runtimeClass, "equals", "(II)Z");
+				mv.visitMethodInsn(INVOKESTATIC, runtimeClass, "equals", "(II)Z", false);
 			}
 			else if(n.getOp().equals(Kind.NOT_EQUALS))
 			{
-				mv.visitFieldInsn(INVOKESTATIC, runtimeClass, "notEquals", "(II)Z");
+				mv.visitMethodInsn(INVOKESTATIC, runtimeClass, "notEquals", "(II)Z", false);
 			}
 			else if(n.getOp().equals(Kind.TIMES))
 			{
-				mv.visitFieldInsn(INVOKESTATIC, runtimeClass, "times", "(II)I");
+				mv.visitMethodInsn(INVOKESTATIC, runtimeClass, "times", "(II)I", false);
 			}
 			else if(n.getOp().equals(Kind.DIV))
 			{
-				mv.visitFieldInsn(GETSTATIC, runtimeClass, "divide", "(II)I");
+				mv.visitMethodInsn(INVOKESTATIC, runtimeClass, "divide", "(II)I", false);
 			}
 			else if(n.getOp().equals(Kind.LT))
 			{
-				mv.visitFieldInsn(GETSTATIC, runtimeClass, "lessThan", "(II)Z");
+				mv.visitMethodInsn(INVOKESTATIC, runtimeClass, "lessThan", "(II)Z", false);
 			}
 			else if(n.getOp().equals(Kind.GT))
 			{
-				mv.visitFieldInsn(GETSTATIC, runtimeClass, "greaterThan", "(II)Z");
+				mv.visitMethodInsn(INVOKESTATIC, runtimeClass, "greaterThan", "(II)Z", false);
 			}
 		}
 		else if( n.getLeft().getType().isBoolean() && n.getRight().getType().isBoolean() )
 		{
 			if(n.getOp().equals(Kind.AND))
 			{
-				mv.visitFieldInsn(GETSTATIC, runtimeClass, "and", "(ZZ)Z");
+				mv.visitMethodInsn(INVOKESTATIC, runtimeClass, "and", "(ZZ)Z", false);
 			}
 			else if(n.getOp().equals(Kind.OR))
 			{
-				mv.visitFieldInsn(GETSTATIC, runtimeClass, "or", "(ZZ)Z");
+				mv.visitMethodInsn(INVOKESTATIC, runtimeClass, "or", "(ZZ)Z", false);
 			}
 			else if(n.getOp().equals(Kind.EQUALS))
 			{
-				mv.visitFieldInsn(GETSTATIC, runtimeClass, "equals", "(ZZ)Z");
+				mv.visitMethodInsn(INVOKESTATIC, runtimeClass, "equals", "(ZZ)Z", false);
 			}
 			else if(n.getOp().equals(Kind.NOT_EQUALS))
 			{
-				mv.visitFieldInsn(GETSTATIC, runtimeClass, "notEquals", "(ZZ)Z");
+				mv.visitMethodInsn(INVOKESTATIC, runtimeClass, "notEquals", "(ZZ)Z", false);
 			}
 		}
 		else if(n.getLeft().getType().isString() && n.getRight().getType().isString() )
 		{
 			if(n.getOp().equals(Kind.PLUS))
 			{
-				mv.visitFieldInsn(GETSTATIC, runtimeClass, "plus", "(" + stringDesc + stringDesc + ")" + stringDesc);
+				mv.visitMethodInsn(INVOKESTATIC, runtimeClass, "concat", "(" + stringDesc + stringDesc + ")" + stringDesc, false);
 			}
 			else if(n.getOp().equals(Kind.EQUALS))
 			{
-				mv.visitFieldInsn(GETSTATIC, runtimeClass, "equals", "(" + stringDesc + stringDesc + ")Z" );
+				mv.visitMethodInsn(INVOKESTATIC, runtimeClass, "equals", "(" + stringDesc + stringDesc + ")Z", false);
 			}
 			else if(n.getOp().equals(Kind.NOT_EQUALS))
 			{
-				mv.visitFieldInsn(GETSTATIC, runtimeClass, "notEquals", "(" + stringDesc + stringDesc + ")Z" );
+				mv.visitMethodInsn(INVOKESTATIC, runtimeClass, "notEquals", "(" + stringDesc + stringDesc + ")Z", false);
 			}
 			else if(n.getOp().equals(Kind.LT))
 			{
-				mv.visitFieldInsn(GETSTATIC, runtimeClass, "lessThan", "(" + stringDesc + stringDesc + ")Z" );
+				mv.visitMethodInsn(INVOKESTATIC, runtimeClass, "lessThan", "(" + stringDesc + stringDesc + ")Z", false);
 			}
 			else if(n.getOp().equals(Kind.GT))
 			{
-				mv.visitFieldInsn(GETSTATIC, runtimeClass, "greaterThan", "(" + stringDesc + stringDesc + ")Z" );
+				mv.visitMethodInsn(INVOKESTATIC, runtimeClass, "greaterThan", "(" + stringDesc + stringDesc + ")Z", false);
 			}
 		}
-		
-		
-		throw new UnsupportedOperationException("TO IMPLEMENT");
+		return null;
+		//throw new UnsupportedOperationException("TO IMPLEMENT");
 	}
 
 
@@ -264,9 +263,13 @@ public class StarterCodeGenVisitor implements ASTVisitor, Opcodes {
 	@Override
 	public Object visitIFunctionCallExpression(IFunctionCallExpression n, Object arg) throws Exception {
 		
+		MethodVisitor mv = ((MethodVisitorLocalVarTable)arg).mv;
 		/*
 		 * Getting description.
 		 */
+		
+		n.getName().visit(this, arg);
+		
 		StringBuffer stringBuffer = new StringBuffer();
 		List<IExpression> listOfExpressions = n.getArgs();
 		
@@ -275,6 +278,13 @@ public class StarterCodeGenVisitor implements ASTVisitor, Opcodes {
 		{
 			stringBuffer.append(singleExpression.getType().getDesc());
 		}
+		stringBuffer.append(")");
+		
+		IType resultType = ((IFunctionDeclaration)n.getName().getDec()).getResultType();
+		
+		stringBuffer.append(resultType.getDesc());
+		
+		mv.visitMethodInsn(INVOKESTATIC, className, n.getName().getName(), stringBuffer.toString(),false);
 		
 		return null;
 		//throw new UnsupportedOperationException("TO IMPLEMENT");
@@ -304,14 +314,14 @@ public class StarterCodeGenVisitor implements ASTVisitor, Opcodes {
 		else
 		{
 			if(n.getType().isKind(TypeKind.BOOLEAN)) {
-	            mv.visitVarInsn(ISTORE, n.getName().getSlot());
+	            mv.visitVarInsn(ILOAD, ((INameDef)n.getName().getDec()).getIdent().getSlot());
 			}
 			else if(n.getType().isKind(TypeKind.INT)) {
-				mv.visitVarInsn(ISTORE, n.getName().getSlot());
+				mv.visitVarInsn(ILOAD, ((INameDef)n.getName().getDec()).getIdent().getSlot());
 			}
 			else if(n.getType().isKind(TypeKind.STRING))
 			{
-				mv.visitVarInsn(ASTORE, n.getName().getSlot());
+				mv.visitVarInsn(ALOAD, ((INameDef)n.getName().getDec()).getIdent().getSlot());
 			}
 		}
 		
@@ -333,6 +343,40 @@ public class StarterCodeGenVisitor implements ASTVisitor, Opcodes {
 	@Override
 	public Object visitIIdentifier(IIdentifier n, Object arg) throws Exception {
 		
+		MethodVisitor mv = ((MethodVisitorLocalVarTable)arg).mv;
+		String desc;
+		
+		if(n.getDec() instanceof IImmutableGlobal || n.getDec() instanceof IMutableGlobal)
+		{
+			if(n.getDec().getType().isKind(TypeKind.BOOLEAN)) {
+				desc = "Z";
+	            mv.visitFieldInsn(GETSTATIC, className, n.getText(), desc);
+			}
+			else if(n.getDec().getType().isKind(TypeKind.INT)) {
+				desc = "I";
+	            mv.visitFieldInsn(GETSTATIC, className, n.getText(), desc);
+			}
+			else if(n.getDec().getType().isKind(TypeKind.STRING))
+			{
+				desc = stringDesc;
+				mv.visitFieldInsn(GETSTATIC, className, n.getText(), desc);
+			}
+		}
+		else
+		{
+			List<LocalVarInfo> localVarArray = ((MethodVisitorLocalVarTable)arg).localVars;
+			
+			if(n.getDec().getType().isKind(TypeKind.BOOLEAN)) {
+	            mv.visitVarInsn(ILOAD, ((IFunctionDeclaration)n.getDec()).getName().getSlot());
+			}
+			else if(n.getDec().getType().isKind(TypeKind.INT)) {
+				mv.visitVarInsn(ILOAD, ((IFunctionDeclaration)n.getDec()).getName().getSlot());
+			}
+			else if(n.getDec().getType().isKind(TypeKind.STRING))
+			{
+				mv.visitVarInsn(ALOAD, ((IFunctionDeclaration)n.getDec()).getName().getSlot());
+			}
+		}
 		return null;
 		
 		//throw new UnsupportedOperationException("TO IMPLEMENT");
@@ -375,7 +419,18 @@ public class StarterCodeGenVisitor implements ASTVisitor, Opcodes {
 
 	@Override
 	public Object visitILetStatement(ILetStatement n, Object arg) throws Exception {
-		throw new UnsupportedOperationException("TO IMPLEMENT");
+		MethodVisitor mv = ((MethodVisitorLocalVarTable)arg).mv;
+		n.getLocalDef().visit(this, arg);
+		if(n.getExpression() != null)
+		{
+			n.getExpression().visit(this, arg);
+			if(n.getExpression().getType().isInt() || n.getExpression().getType().isBoolean())
+				mv.visitVarInsn(ILOAD,n.getLocalDef().getIdent().getSlot());
+			else mv.visitVarInsn(ALOAD, n.getLocalDef().getIdent().getSlot());
+		}
+		n.getBlock().visit(this, arg);
+		return null;
+		//throw new UnsupportedOperationException("TO IMPLEMENT");
 	}
 		
 
@@ -580,8 +635,8 @@ public class StarterCodeGenVisitor implements ASTVisitor, Opcodes {
 		if(e!=null)
 		{
 			e.visit(this, arg);  //generate code to leave value of expression on top of stack
+			mv.visitFieldInsn(PUTSTATIC, className, varName, typeDesc);
 		}
-		mv.visitFieldInsn(PUTSTATIC, className, varName, typeDesc);
 		return null;
 		//throw new UnsupportedOperationException("TO IMPLEMENT");
 	}
