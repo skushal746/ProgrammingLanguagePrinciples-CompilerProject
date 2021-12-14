@@ -450,6 +450,9 @@ public class PLPUtils {
 			int startPoint = pLpLexer.getInput().indexOf("/*");
 			int endPoint = pLpLexer.getInput().indexOf("*/", startPoint);
 			
+			if(endPoint == -1)
+				break;
+			
 			for(int i=startPoint;i<endPoint+2;i++)
 			{
 				if(pLpLexer.getInput().charAt(i)=='\n')
