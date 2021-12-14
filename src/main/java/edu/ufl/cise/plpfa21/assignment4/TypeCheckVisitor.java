@@ -195,7 +195,8 @@ public class TypeCheckVisitor implements ASTVisitor {
 		symtab.enterScope();
 		//IType inferredType = unifyAndCheck(localDef.getType(), expressionType, n);
 		//localDef.setType(inferredType);
-		localDef.setType(expressionType);
+		if(expression!=null)
+			localDef.setType(expressionType);
 		IBlock block = n.getBlock();
 		block.visit(this, arg);
 		symtab.leaveScope();
