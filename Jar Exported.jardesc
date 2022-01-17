@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<jardesc>
+    <jar path="D:/Work Work Work/Graduate Program/Programming Language Principles/Submission/Assignment 1/kushal_sharma_24222012_hw1.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/kushal_sharma_24222012_hw1/Jar Exported.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="true" manifestLocation="" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=kushal_sharma_24222012_hw1/src"/>
+        <file path="/kushal_sharma_24222012_hw1/.gitignore"/>
+        <file path="/kushal_sharma_24222012_hw1/.classpath"/>
+        <file path="/kushal_sharma_24222012_hw1/README.md"/>
+        <file path="/kushal_sharma_24222012_hw1/.project"/>
+    </selectedElements>
+</jardesc>
